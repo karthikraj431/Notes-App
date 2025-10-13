@@ -83,19 +83,28 @@ const Home = () => {
   };
 
   const deleteNote = async (id) => {
-    try {
-      const { data } = await axios.delete(`https://notes-app-backend-7fac.onrender.com/api/note/${id}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      if (data.success) {
-        toast.success("Note deleted successfully!");
-        fetchNotes();
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to delete note");
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("You must be logged in to delete notes");
+      return;
     }
-  };
+
+    const { data } = await axios.delete(
+      `https://notes-app-backend-7fac.onrender.com/api/note/${id}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (data.success) {
+      toast.success("Note deleted successfully!");
+      fetchNotes();
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error(error.response?.data?.message || "Failed to delete note");
+  }
+};
+
 
   const onEdit = (note) => {
     setCurrentNote(note);
