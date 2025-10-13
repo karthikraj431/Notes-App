@@ -77,46 +77,62 @@ const Home = () => {
 
   // Edit note
   const editNote = async (id, title, description) => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      const { data } = await axios.put(
-        `${API_URL}/api/note/${id}`,
-        { title, description },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      if (data.success) {
-        fetchNotes();
-        setModalOpen(false);
-        toast.success("Note updated successfully!");
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error(error.response?.data?.message || "Failed to edit note");
+  try {
+    const token = localStorage.getItem("token");
+    console.log("Editing note ID:", id);
+    console.log("Token:", token);
+    if (!token) {
+      toast.error("No token found, please login");
+      return;
     }
-  };
+
+    const { data } = await axios.put(
+      `${API_URL}/api/note/${id}`,
+      { title, description },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    console.log("Edit response:", data);
+
+    if (data.success) {
+      fetchNotes();
+      setModalOpen(false);
+      toast.success("Note updated successfully!");
+    }
+  } catch (error) {
+    console.error("Edit note error:", error.response || error);
+    toast.error(error.response?.data?.message || "Failed to edit note");
+  }
+};
+
 
   // Delete note
   const deleteNote = async (id) => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return toast.error("You must be logged in");
-
-      const { data } = await axios.delete(`${API_URL}/api/note/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (data.success) {
-        toast.success("Note deleted successfully!");
-        fetchNotes();
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error(error.response?.data?.message || "Failed to delete note");
+  try {
+    const token = localStorage.getItem("token");
+    console.log("Deleting note ID:", id);
+    console.log("Token:", token);
+    if (!token) {
+      toast.error("No token found, please login");
+      return;
     }
-  };
+
+    const { data } = await axios.delete(`${API_URL}/api/note/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    console.log("Delete response:", data);
+
+    if (data.success) {
+      toast.success("Note deleted successfully!");
+      fetchNotes();
+    }
+  } catch (error) {
+    console.error("Delete note error:", error.response || error);
+    toast.error(error.response?.data?.message || "Failed to delete note");
+  }
+};
+
 
   const onEdit = (note) => {
     setCurrentNote(note);
