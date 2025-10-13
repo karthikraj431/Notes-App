@@ -14,10 +14,10 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("https://notes-app-backend-7fac.onrender.com/api/auth/login", {
-        email,
-        password,
-      });
+      const res = await axios.post("https://notes-app-backend-7fac.onrender.com/api/auth/login",
+  { email, password }
+);
+
 
       if (res.data.success) {
         localStorage.setItem("token", res.data.token);

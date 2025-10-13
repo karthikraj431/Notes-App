@@ -14,10 +14,10 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "https://notes-app-backend-7fac.onrender.com/api/auth/register",
-        { name, email, password }
-      );
+      const response = await axios.post("https://notes-app-backend-7fac.onrender.com/api/auth/register",
+  { name, email, password }
+);
+
 
       if (response.data.success) {
         // Save token to localStorage
