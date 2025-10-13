@@ -11,7 +11,9 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const { login } = useAuth();
 
-  const API_URL = import.meta.env.VITE_API_URL; // ✅ Correct for Vite
+  // const API_URL = import.meta.env.VITE_API_URL; // ✅ Correct for Vite
+  const API_URL = import.meta.env.VITE_API_URL;
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();

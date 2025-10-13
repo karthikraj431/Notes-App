@@ -10,7 +10,9 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const API_URL = import.meta.env.VITE_API_URL; // ✅ Correct way for Vite
+  // const API_URL = import.meta.env.VITE_API_URL; // ✅ Correct way for Vite
+  const API_URL = import.meta.env.VITE_API_URL;
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
