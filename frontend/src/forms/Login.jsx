@@ -9,7 +9,8 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
-  const API_URL = process.env.REACT_APP_API_URL;
+
+  const API_URL = import.meta.env.VITE_API_URL; // ✅ Correct way for Vite
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,14 +34,38 @@ const Login = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
       <div className="bg-white shadow-2xl rounded-2xl w-full max-w-md p-8">
-        <h2 className="text-3xl font-semibold text-center text-blue-600 mb-6">Login to Your Account</h2>
+        <h2 className="text-3xl font-semibold text-center text-blue-600 mb-6">
+          Login to Your Account
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-5">
-          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required />
-          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required />
-          <button type="submit" className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition duration-200">Login</button>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition duration-200"
+          >
+            Login
+          </button>
         </form>
         <p className="text-center text-gray-500 text-sm mt-6">
-          Don’t have an account? <Link to="/signup" className="text-blue-600 hover:underline">Sign up</Link>
+          Don’t have an account?{" "}
+          <Link to="/signup" className="text-blue-600 hover:underline">
+            Sign up
+          </Link>
         </p>
       </div>
     </div>
@@ -48,6 +73,59 @@ const Login = () => {
 };
 
 export default Login;
+
+
+
+// import React, { useState } from "react";
+// import axios from "axios";
+// import { useNavigate, Link } from "react-router-dom";
+// import { toast } from "react-toastify";
+// import { useAuth } from "../context/ContextProvider";
+
+// const Login = () => {
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+//   const { login } = useAuth();
+//   const navigate = useNavigate();
+//   const API_URL = process.env.REACT_APP_API_URL;
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     try {
+//       const { data } = await axios.post(`${API_URL}/api/auth/login`, { email, password });
+
+//       if (data.success) {
+//         localStorage.setItem("token", data.token);
+//         login(data.user);
+//         toast.success("Login Successful!");
+//         navigate("/");
+//       } else {
+//         toast.error(data.message);
+//       }
+//     } catch (error) {
+//       console.log("Login error:", error);
+//       toast.error(error.response?.data?.message || "Login failed");
+//     }
+//   };
+
+//   return (
+//     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+//       <div className="bg-white shadow-2xl rounded-2xl w-full max-w-md p-8">
+//         <h2 className="text-3xl font-semibold text-center text-blue-600 mb-6">Login to Your Account</h2>
+//         <form onSubmit={handleSubmit} className="space-y-5">
+//           <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required />
+//           <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required />
+//           <button type="submit" className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition duration-200">Login</button>
+//         </form>
+//         <p className="text-center text-gray-500 text-sm mt-6">
+//           Don’t have an account? <Link to="/signup" className="text-blue-600 hover:underline">Sign up</Link>
+//         </p>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Login;
 
 
 
