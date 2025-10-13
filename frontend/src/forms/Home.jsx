@@ -84,7 +84,7 @@ const Home = () => {
 
   const deleteNote = async (id) => {
     try {
-      const { data } = await axios.delete(`https://notes-app-backend-7fac.onrender.com/${id}`, {
+      const { data } = await axios.delete(`https://notes-app-backend-7fac.onrender.com/api/note/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       if (data.success) {
