@@ -33,6 +33,12 @@ const Navbar = ({ setQuery }) => {
             onChange={(e) => setQuery(e.target.value)}
             className="px-3 py-1 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
+          <Link
+            to="/dashboard"
+            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
+          >
+            Dashboard
+          </Link>
           <button
             onClick={logout}
             className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
@@ -64,7 +70,6 @@ export default Navbar;
 
 
 
-
 // import React from "react";
 // import { useAuth } from "../context/ContextProvider";
 // import { motion } from "framer-motion";
@@ -81,7 +86,15 @@ export default Navbar;
 //       transition={{ duration: 0.5 }}
 //     >
 //       <Link to="/" className="text-2xl font-bold text-blue-600">
-//         Notes App
+//         {user ? (
+//           <span>
+//             {user.name
+//               ? `${user.name.split(" ")[0]}, welcome to Notes App`
+//               : "Welcome to Notes App"}
+//           </span>
+//         ) : (
+//           "Notes App"
+//         )}
 //       </Link>
 
 //       {user ? (
@@ -94,7 +107,7 @@ export default Navbar;
 //           />
 //           <button
 //             onClick={logout}
-//             className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+//             className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
 //           >
 //             Logout
 //           </button>

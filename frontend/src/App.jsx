@@ -3,9 +3,11 @@ import Signup from './forms/Signup';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './forms/Home';
 import Login from './forms/Login';
+import Dashboard from './forms/Dashboard';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ContextProvider from './context/ContextProvider';
+import Dashboard from './forms/Dashboard';
 
 function App() {
   return (
@@ -15,6 +17,7 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/login' element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
         <ToastContainer />
       </BrowserRouter>
