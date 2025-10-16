@@ -1,133 +1,91 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuth } from "../context/ContextProvider";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const Dashboard = ({ isOpen, closeSidebar }) => {
-  const { user, logout } = useAuth();
-  const [notes, setNotes] = useState([]);
-  const [currentPassword, setCurrentPassword] = useState("");
+const Sidebar = ({ isOpen, closeSidebar }) => {
+  const { user, setUser, logout } = useAuth();
+  const [prevPassword, setPrevPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [canChange, setCanChange] = useState(false);
   const API_URL = import.meta.env.VITE_API_URL;
 
-  useEffect(() => {
-    if (user) fetchNotes();
-  }, [user]);
-
-  const fetchNotes = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const { data } = await axios.get(`${API_URL}/api/note`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (data.success) setNotes(data.notes);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const verifyCurrentPassword = async () => {
+  const handleChangePassword = async () => {
     try {
       const token = localStorage.getItem("token");
       const { data } = await axios.post(
-        `${API_URL}/api/auth/verify-password`,
-        { password: currentPassword },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      if (data.success) {
-        toast.success("Password verified, you can change it now.");
-        setCanChange(true);
-      } else {
-        toast.error("Current password is incorrect.");
-        setCanChange(false);
-      }
-    } catch (error) {
-      toast.error("Verification failed.");
-      setCanChange(false);
-    }
-  };
-
-  const handleChangePassword = async () => {
-    if (!canChange) return toast.error("Verify current password first.");
-    try {
-      const token = localStorage.getItem("token");
-      const { data } = await axios.put(
-        `${API_URL}/api/auth/update-password`,
-        { newPassword },
+        `${API_URL}/api/auth/change-password`,
+        { prevPassword, newPassword },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (data.success) {
         toast.success("Password updated successfully!");
-        setCurrentPassword("");
+        setPrevPassword("");
         setNewPassword("");
-        setCanChange(false);
+        closeSidebar();
+        logout(); // force login again
+      } else {
+        toast.error(data.message);
       }
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to update password");
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Failed to update password");
     }
   };
 
   return (
     <div
-      className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg p-6 transition-transform duration-300 ${
+      className={`fixed top-0 left-0 h-full bg-white shadow-lg w-64 p-6 transform transition-transform duration-300 ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       }`}
     >
-      <h2 className="text-xl font-bold mb-4">Profile</h2>
-      <p><strong>Name:</strong> {user.name}</p>
-      <p><strong>Email:</strong> {user.email}</p>
+      <h2 className="text-xl font-semibold mb-4">Profile</h2>
+      <p className="mb-4">Hello, {user.name}</p>
 
-      <hr className="my-4" />
-      <h3 className="font-semibold mb-2">Update Password</h3>
-      <input
-        type="password"
-        placeholder="Current Password"
-        className="w-full p-2 border rounded mb-2"
-        value={currentPassword}
-        onChange={(e) => setCurrentPassword(e.target.value)}
-      />
-      <button
-        onClick={verifyCurrentPassword}
-        className="w-full bg-blue-600 text-white py-2 rounded mb-2 hover:bg-blue-700"
-      >
-        Verify Current Password
-      </button>
-      <input
-        type="password"
-        placeholder="New Password"
-        className="w-full p-2 border rounded mb-2"
-        value={newPassword}
-        onChange={(e) => setNewPassword(e.target.value)}
-        disabled={!canChange}
-      />
+      <div className="mb-4">
+        <label className="block mb-1 font-medium">Previous Password</label>
+        <input
+          type="password"
+          value={prevPassword}
+          onChange={(e) => setPrevPassword(e.target.value)}
+          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block mb-1 font-medium">New Password</label>
+        <input
+          type="password"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+      </div>
+
       <button
         onClick={handleChangePassword}
-        className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
-        disabled={!canChange}
+        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
       >
-        Change Password
+        Update Password
       </button>
-
-      <hr className="my-4" />
-      <h3 className="font-semibold mb-2">Recent Notes</h3>
-      <ul className="list-disc list-inside max-h-64 overflow-y-auto">
-        {notes.map((note) => (
-          <li key={note._id}>{note.title}</li>
-        ))}
-      </ul>
 
       <button
         onClick={logout}
-        className="mt-4 w-full bg-red-600 text-white py-2 rounded hover:bg-red-700"
+        className="w-full mt-4 bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition"
       >
         Logout
+      </button>
+
+      <button
+        onClick={closeSidebar}
+        className="absolute top-4 right-4 text-gray-600 hover:text-gray-900"
+      >
+        ✕
       </button>
     </div>
   );
 };
 
-export default Dashboard;
+export default Sidebar;
 
 
 

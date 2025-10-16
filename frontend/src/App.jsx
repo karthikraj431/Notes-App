@@ -3,7 +3,7 @@ import Signup from './forms/Signup';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './forms/Home';
 import Login from './forms/Login';
-import Dashboard from './forms/Dashboard';
+import Sidebar from './forms/Sidebar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ContextProvider from './context/ContextProvider';
@@ -16,7 +16,7 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/login' element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/sidebar" element={<Sidebar />}/>
         </Routes>
         <ToastContainer />
       </BrowserRouter>
