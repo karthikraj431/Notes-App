@@ -3,7 +3,7 @@ import { useAuth } from "../context/ContextProvider";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const Sidebar = ({ isOpen, closeSidebar }) => {
+const Dashboard = ({ isOpen, closeSidebar }) => {
   const { user, logout } = useAuth();
   const [notes, setNotes] = useState([]);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -127,7 +127,7 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
   );
 };
 
-export default Sidebar;
+export default Dashboard;
 
 
 
