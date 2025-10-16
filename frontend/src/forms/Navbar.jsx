@@ -39,6 +39,7 @@ export default Navbar;
 
 
 
+
 // import React, { useState } from "react";
 // import { useAuth } from "../context/ContextProvider";
 // import { motion } from "framer-motion";
