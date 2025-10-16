@@ -7,7 +7,6 @@ import Dashboard from './forms/Dashboard';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ContextProvider from './context/ContextProvider';
-import Dashboard from './forms/Dashboard';
 
 function App() {
   return (
