@@ -34,24 +34,52 @@ const ContextProvider = ({ children }) => {
     setUser(null);
   };
 
-  useEffect(() => {
-    const verifyUser = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return setUser(null);
 
-      try {
-        const res = await axios.get(`${API_URL}/api/auth/verify`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.data.success) setUser(res.data.user);
-        else setUser(null);
-      } catch (error) {
-        console.log(error);
-        setUser(null);
-      }
-    };
-    verifyUser();
-  }, []);
+  const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  const verifyUser = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await axios.get(`${API_URL}/api/auth/verify`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.data.success) setUser(res.data.user);
+      else setUser(null);
+    } catch (error) {
+      console.log(error);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+  verifyUser();
+}, []);
+
+  // useEffect(() => {
+  //   const verifyUser = async () => {
+  //     const token = localStorage.getItem("token");
+  //     if (!token) return setUser(null);
+
+  //     try {
+  //       const res = await axios.get(`${API_URL}/api/auth/verify`, {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       });
+  //       if (res.data.success) setUser(res.data.user);
+  //       else setUser(null);
+  //     } catch (error) {
+  //       console.log(error);
+  //       setUser(null);
+  //     }
+  //   };
+  //   verifyUser();
+  // }, []);
 
   return (
     <authContext.Provider
