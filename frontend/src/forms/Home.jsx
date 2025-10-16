@@ -5,6 +5,7 @@ import Card from "./Card";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/ContextProvider";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const { user } = useAuth();
