@@ -9,21 +9,20 @@ const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  // ✅ Password validation function
   const validatePassword = (password) => {
-    const regex =
+    const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return regex.test(password);
+    return passwordRegex.test(password);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ✅ Check password strength before sending
     if (!validatePassword(password)) {
       toast.error(
         "Password must be at least 8 characters long and include uppercase, lowercase, number, and symbol."
@@ -59,6 +58,7 @@ const Signup = () => {
         className="bg-white p-8 rounded shadow-md w-96 flex flex-col gap-4"
       >
         <h2 className="text-2xl font-bold text-center mb-4">Sign Up</h2>
+
         <input
           type="text"
           placeholder="Name"
@@ -67,6 +67,7 @@ const Signup = () => {
           className="p-2 border rounded"
           required
         />
+
         <input
           type="email"
           placeholder="Email"
@@ -75,20 +76,32 @@ const Signup = () => {
           className="p-2 border rounded"
           required
         />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="p-2 border rounded"
-          required
-        />
+
+        <div className="relative">
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="p-2 border rounded w-full pr-10"
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-2 top-2 text-gray-600 hover:text-gray-800"
+          >
+            {showPassword ? "🙈" : "👁️"}
+          </button>
+        </div>
+
         <button
           type="submit"
           className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition"
         >
           Sign Up
         </button>
+
         <p className="text-center text-sm text-gray-500">
           Already a user?{" "}
           <Link to="/login" className="text-blue-600 hover:underline">
@@ -101,6 +114,8 @@ const Signup = () => {
 };
 
 export default Signup;
+
+
 
 
 
@@ -117,12 +132,26 @@ export default Signup;
 //   const [password, setPassword] = useState("");
 //   const { login } = useAuth();
 
-//   // const API_URL = import.meta.env.VITE_API_URL; // ✅ Correct for Vite
 //   const API_URL = import.meta.env.VITE_API_URL;
 
+//   // ✅ Password validation function
+//   const validatePassword = (password) => {
+//     const regex =
+//       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+//     return regex.test(password);
+//   };
 
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
+
+//     // ✅ Check password strength before sending
+//     if (!validatePassword(password)) {
+//       toast.error(
+//         "Password must be at least 8 characters long and include uppercase, lowercase, number, and symbol."
+//       );
+//       return;
+//     }
+
 //     try {
 //       const { data } = await axios.post(`${API_URL}/api/auth/register`, {
 //         name,
