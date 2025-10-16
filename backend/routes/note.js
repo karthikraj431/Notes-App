@@ -47,8 +47,12 @@ router.delete("/:id", middleware, async (req, res) => {
   try {
     const { id } = req.params;
     const note = await Note.findById(id);
-    if (!note) return res.status(404).json({ success: false, message: "Note not found" });
-    if (note.userId.toString() !== req.user.id) return res.status(403).json({ success: false, message: "Not authorized" });
+
+    if (!note)
+      return res.status(404).json({ success: false, message: "Note not found" });
+
+    if (note.userId.toString() !== req.user.id)
+      return res.status(403).json({ success: false, message: "Not authorized" });
 
     await Note.findByIdAndDelete(id);
     return res.status(200).json({ success: true, message: "Note deleted successfully!" });
@@ -56,6 +60,20 @@ router.delete("/:id", middleware, async (req, res) => {
     return res.status(500).json({ success: false, message: "Can't delete note" });
   }
 });
+
+// router.delete("/:id", middleware, async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const note = await Note.findById(id);
+//     if (!note) return res.status(404).json({ success: false, message: "Note not found" });
+//     if (note.userId.toString() !== req.user.id) return res.status(403).json({ success: false, message: "Not authorized" });
+
+//     await Note.findByIdAndDelete(id);
+//     return res.status(200).json({ success: true, message: "Note deleted successfully!" });
+//   } catch (error) {
+//     return res.status(500).json({ success: false, message: "Can't delete note" });
+//   }
+// });
 
 export default router;
 
