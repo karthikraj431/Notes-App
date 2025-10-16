@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/ContextProvider";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const Signup = () => {
 
     if (!validatePassword(password)) {
       toast.error(
-        "Password must be at least 8 characters long and include uppercase, lowercase, number, and symbol."
+        "Password must be at least 8 characters and include uppercase, lowercase, number, and symbol."
       );
       return;
     }
@@ -89,9 +90,9 @@ const Signup = () => {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-2 top-2 text-gray-600 hover:text-gray-800"
+            className="absolute right-3 top-2.5 text-gray-600 hover:text-gray-800"
           >
-            {showPassword ? "🙈" : "👁️"}
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
           </button>
         </div>
 
@@ -114,6 +115,7 @@ const Signup = () => {
 };
 
 export default Signup;
+
 
 
 
