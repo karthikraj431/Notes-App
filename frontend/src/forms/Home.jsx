@@ -199,7 +199,7 @@ const Home = () => {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50 font-sans">
         <nav className="w-full bg-white shadow-md py-4 px-6 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-indigo-600">NotaAI</h1>
+          <h1 className="text-2xl font-bold text-indigo-600">NOTES</h1>
           <div className="flex items-center gap-4">
             <Link
               to="/login"
@@ -251,7 +251,7 @@ const Home = () => {
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r flex flex-col">
         <div className="px-6 py-6 border-b">
-          <h1 className="text-2xl font-bold text-indigo-600">NotaAI</h1>
+          <h1 className="text-2xl font-bold text-indigo-600">NOTES</h1>
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 py-4">

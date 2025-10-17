@@ -55,7 +55,7 @@ const Navbar = ({
     >
       {/* Left: logo + avatar */}
       <div className="flex items-center gap-4">
-        <div className="text-2xl font-bold text-indigo-600">NotaAI</div>
+        <div className="text-2xl font-bold text-indigo-600">NOTES</div>
         {user && (
           <button
             className="flex items-center gap-2 text-sm text-gray-700"
