@@ -71,4 +71,40 @@ router.get("/verify", async (req, res) => {
   }
 });
 
+// Change Password
+router.post("/change-password", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader)
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+
+    const token = authHeader.split(" ")[1];
+    if (!token)
+      return res.status(401).json({ success: false, message: "Token missing" });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    if (!user)
+      return res.status(404).json({ success: false, message: "User not found" });
+
+    const { prevPassword, newPassword } = req.body;
+    if (!prevPassword || !newPassword)
+      return res.status(400).json({ success: false, message: "All fields required" });
+
+    const isMatch = await bcrypt.compare(prevPassword, user.password);
+    if (!isMatch)
+      return res.status(400).json({ success: false, message: "Previous password incorrect" });
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({ success: true, message: "Password updated successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+
 export default router;
