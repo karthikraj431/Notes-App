@@ -4,9 +4,10 @@ const NoteSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
+    completed: { type: Boolean, default: false }, // ✅ new field
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   },
-  { timestamps: true } // ✅ adds createdAt & updatedAt automatically
+  { timestamps: true }
 );
 
 const Note = mongoose.model("Note", NoteSchema);
@@ -17,11 +18,14 @@ export default Note;
 
 // import mongoose from "mongoose";
 
-// const NoteSchema = new mongoose.Schema({
+// const NoteSchema = new mongoose.Schema(
+//   {
 //     title: { type: String, required: true },
 //     description: { type: String, required: true },
 //     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-// });
+//   },
+//   { timestamps: true } // ✅ adds createdAt & updatedAt automatically
+// );
 
-// const Note = mongoose.model('Note', NoteSchema);
+// const Note = mongoose.model("Note", NoteSchema);
 // export default Note;
