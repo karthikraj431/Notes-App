@@ -2,7 +2,7 @@ import React from "react";
 import { useAuth } from "../context/ContextProvider";
 import { motion } from "framer-motion";
 
-const Navbar = ({ setQuery, isSidebarOpen, setSidebarOpen }) => {
+const Navbar = ({ setQuery, isSidebarOpen, setSidebarOpen, filter, setFilter }) => {
   const { user } = useAuth();
 
   return (
@@ -25,12 +25,28 @@ const Navbar = ({ setQuery, isSidebarOpen, setSidebarOpen }) => {
         {user && <span className="font-medium">Welcome {user.name.split(" ")[0]}</span>}
       </div>
 
-      <input
-        type="text"
-        placeholder="Search notes..."
-        onChange={(e) => setQuery(e.target.value)}
-        className="px-3 py-1 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-      />
+      <div className="flex items-center gap-4">
+        {/* Search Input */}
+        <input
+          type="text"
+          placeholder="Search notes..."
+          onChange={(e) => setQuery(e.target.value)}
+          className="px-3 py-1 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+
+        {/* Filter Dropdown */}
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="border px-3 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          <option value="">All Notes</option>
+          <option value="completed">Completed Work</option>
+          <option value="incomplete">Incomplete Work</option>
+          <option value="dateAsc">Date Uploaded (Ascending)</option>
+          <option value="dateDesc">Date Uploaded (Descending)</option>
+        </select>
+      </div>
     </motion.nav>
   );
 };
@@ -40,78 +56,49 @@ export default Navbar;
 
 
 
-// import React, { useState } from "react";
+
+
+
+
+
+
+
+
+// import React from "react";
 // import { useAuth } from "../context/ContextProvider";
 // import { motion } from "framer-motion";
-// import { Link } from "react-router-dom";
-// import Dashboard from "./Dashboard";
 
-// const Navbar = ({ setQuery }) => {
+// const Navbar = ({ setQuery, isSidebarOpen, setSidebarOpen }) => {
 //   const { user } = useAuth();
-//   const [isDashboardOpen, setDashboardOpen] = useState(false);
 
 //   return (
-//     <>
-//       <motion.nav
-//         className="flex justify-between items-center px-8 py-4 shadow-lg bg-white"
-//         initial={{ y: -50, opacity: 0 }}
-//         animate={{ y: 0, opacity: 1 }}
-//         transition={{ duration: 0.5 }}
-//       >
-//         {/* User avatar/logo on left */}
-//         {user ? (
-//           <div
-//             onClick={() => setDashboardOpen(true)}
-//             className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center cursor-pointer font-bold"
-//             title="Open Dashboard"
-//           >
-//             {user.name ? user.name[0].toUpperCase() : "U"}
-//           </div>
-//         ) : (
-//           <Link to="/" className="text-2xl font-bold text-blue-600">
-//             Notes App
-//           </Link>
-//         )}
-
-//         {/* Search input (for logged-in user) */}
+//     <motion.nav
+//       className="flex justify-between items-center px-8 py-4 shadow-lg bg-white"
+//       initial={{ y: -50, opacity: 0 }}
+//       animate={{ y: 0, opacity: 1 }}
+//       transition={{ duration: 0.5 }}
+//     >
+//       <div className="flex items-center gap-3">
+//         {/* User Avatar */}
 //         {user && (
-//           <input
-//             type="text"
-//             placeholder="Search notes..."
-//             onChange={(e) => setQuery(e.target.value)}
-//             className="px-3 py-1 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 w-64"
-//           />
-//         )}
-
-//         {/* Signup/Login links for non-logged-in users */}
-//         {!user && (
-//           <div className="flex items-center gap-4">
-//             <Link
-//               to="/login"
-//               className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition"
-//             >
-//               Login
-//             </Link>
-//             <Link
-//               to="/signup"
-//               className="text-gray-700 font-medium hover:text-blue-600 transition"
-//             >
-//               Signup
-//             </Link>
+//           <div
+//             className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold cursor-pointer"
+//             onClick={() => setSidebarOpen(!isSidebarOpen)}
+//           >
+//             {user.name?.charAt(0).toUpperCase()}
 //           </div>
 //         )}
-//       </motion.nav>
+//         {user && <span className="font-medium">Welcome {user.name.split(" ")[0]}</span>}
+//       </div>
 
-//       {/* Dashboard Sidebar */}
-//       {user && (
-//         <Dashboard
-//           isOpen={isDashboardOpen}
-//           onClose={() => setDashboardOpen(false)}
-//         />
-//       )}
-//     </>
+//       <input
+//         type="text"
+//         placeholder="Search notes..."
+//         onChange={(e) => setQuery(e.target.value)}
+//         className="px-3 py-1 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+//       />
+//     </motion.nav>
 //   );
 // };
 
 // export default Navbar;
-

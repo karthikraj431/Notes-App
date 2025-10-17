@@ -15,11 +15,10 @@ const Home = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [currentNote, setCurrentNote] = useState(null);
   const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState(""); // ✅ moved to Navbar
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [filter, setFilter] = useState(""); // ✅ Filter state
   const API_URL = import.meta.env.VITE_API_URL;
 
-  // Fetch notes on user login
   useEffect(() => {
     if (user) fetchNotes();
     else {
@@ -28,7 +27,6 @@ const Home = () => {
     }
   }, [user]);
 
-  // Apply search & filter
   useEffect(() => {
     let tempNotes = [...notes];
 
@@ -60,7 +58,6 @@ const Home = () => {
     setFilteredNotes(tempNotes);
   }, [query, notes, filter]);
 
-  // Fetch all notes
   const fetchNotes = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -75,7 +72,6 @@ const Home = () => {
     }
   };
 
-  // Add note
   const addNote = async (title, description) => {
     try {
       const token = localStorage.getItem("token");
@@ -96,7 +92,6 @@ const Home = () => {
     }
   };
 
-  // Edit note
   const editNote = async (id, title, description) => {
     try {
       const token = localStorage.getItem("token");
@@ -120,7 +115,6 @@ const Home = () => {
     }
   };
 
-  // Delete note
   const deleteNote = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -141,7 +135,6 @@ const Home = () => {
     }
   };
 
-  // Toggle completion
   const toggleCompletion = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -168,28 +161,17 @@ const Home = () => {
   const onEdit = (note) => { setCurrentNote(note); setModalOpen(true); };
   const closeModal = () => { setCurrentNote(null); setModalOpen(false); };
 
-  // Non-user homepage
+  // Non-user view
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50 font-sans">
         <nav className="w-full bg-white shadow-md py-4 px-6 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-blue-600">Notes App</h1>
           <div className="flex items-center gap-4">
-            <Link
-              to="/login"
-              className="text-gray-700 font-medium hover:text-blue-600 transition"
-            >
-              Login
-            </Link>
-            <Link
-              to="/signup"
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition"
-            >
-              Signup
-            </Link>
+            <Link to="/login" className="text-gray-700 font-medium hover:text-blue-600 transition">Login</Link>
+            <Link to="/signup" className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition">Signup</Link>
           </div>
         </nav>
-
         <div className="flex flex-1 flex-col md:flex-row items-center justify-between px-8 md:px-16 py-10 md:gap-16">
           <div className="md:w-1/2 text-center md:text-left mb-10 md:mb-0">
             <h2 className="text-4xl font-extrabold text-gray-800 leading-snug mb-4">
@@ -199,14 +181,9 @@ const Home = () => {
               A simple, elegant place to keep your ideas organized.
             </p>
             <div className="mt-6">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/3081/3081654.png"
-                alt="Premium Notes illustration"
-                className="w-48 mx-auto md:mx-0 opacity-90"
-              />
+              <img src="https://cdn-icons-png.flaticon.com/512/3081/3081654.png" alt="Premium Notes illustration" className="w-48 mx-auto md:mx-0 opacity-90"/>
             </div>
           </div>
-
           <div className="md:w-1/2 flex flex-col items-center justify-center bg-white rounded-2xl shadow-lg p-10">
             <h3 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
               To personalize your notes, please sign up!
@@ -214,97 +191,49 @@ const Home = () => {
             <p className="text-gray-600 text-center mb-6">
               Join now to create, edit, and manage your personal notes easily.
             </p>
-            <Link
-              to="/signup"
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition"
-            >
-              Sign Up
-            </Link>
+            <Link to="/signup" className="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition">Sign Up</Link>
           </div>
         </div>
       </div>
     );
   }
 
-  // Logged-in user homepage
+  // User view
   return (
     <div className="flex">
-      {/* Sidebar */}
-      {user && (
-        <Sidebar
-          isOpen={isSidebarOpen}
-          closeSidebar={() => setSidebarOpen(false)}
-        />
-      )}
-
+      {user && <Sidebar isOpen={isSidebarOpen} closeSidebar={() => setSidebarOpen(false)} />}
       <div className="flex-1 flex flex-col">
         <Navbar
           setQuery={setQuery}
           isSidebarOpen={isSidebarOpen}
           setSidebarOpen={setSidebarOpen}
+          filter={filter}
+          setFilter={setFilter}
         />
 
-        {/* === FILTER DROPDOWN === */}
-        <div
-          className={`p-6 transition-all duration-300 ${isSidebarOpen ? "md:ml-64" : ""}`}
-        >
-          <div className="flex justify-end mb-4">
-            <select
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              className="border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            >
-              <option value="">All Notes</option>
-              <option value="completed">Completed Work</option>
-              <option value="incomplete">Incomplete Work</option>
-              <option value="dateAsc">Date Uploaded (Ascending)</option>
-              <option value="dateDesc">Date Uploaded (Descending)</option>
-            </select>
-          </div>
-
-          {/* === GROUPED NOTES SECTION === */}
+        {/* Notes Section */}
+        <div className={`p-6 transition-all duration-300 ${isSidebarOpen ? "md:ml-64" : ""}`}>
           {(() => {
             const now = new Date();
-            const startOfToday = new Date(now.setHours(0, 0, 0, 0));
+            const startOfToday = new Date(now.setHours(0,0,0,0));
             const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
             const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-            const todayNotes = filteredNotes.filter(
-              (note) => new Date(note.createdAt) >= startOfToday
-            );
-            const weekNotes = filteredNotes.filter(
-              (note) =>
-                new Date(note.createdAt) >= startOfWeek &&
-                new Date(note.createdAt) < startOfToday
-            );
-            const monthNotes = filteredNotes.filter(
-              (note) =>
-                new Date(note.createdAt) >= startOfMonth &&
-                new Date(note.createdAt) < startOfWeek
-            );
-            const olderNotes = filteredNotes.filter(
-              (note) => new Date(note.createdAt) < startOfMonth
-            );
+            const todayNotes = filteredNotes.filter(n => new Date(n.createdAt) >= startOfToday);
+            const weekNotes = filteredNotes.filter(n => new Date(n.createdAt) >= startOfWeek && new Date(n.createdAt) < startOfToday);
+            const monthNotes = filteredNotes.filter(n => new Date(n.createdAt) >= startOfMonth && new Date(n.createdAt) < startOfWeek);
+            const olderNotes = filteredNotes.filter(n => new Date(n.createdAt) < startOfMonth);
 
-            const renderSection = (title, notes) =>
-              notes.length > 0 && (
-                <div className="mb-10">
-                  <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
-                    {title}
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {notes.map((note) => (
-                      <Card
-                        key={note._id}
-                        note={note}
-                        onEdit={onEdit}
-                        deleteNote={deleteNote}
-                        toggleCompletion={toggleCompletion} // ✅ added
-                      />
-                    ))}
-                  </div>
+            const renderSection = (title, notes) => notes.length > 0 && (
+              <div className="mb-10">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-4">{title}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {notes.map(note => (
+                    <Card key={note._id} note={note} onEdit={onEdit} deleteNote={deleteNote} toggleCompletion={toggleCompletion} />
+                  ))}
                 </div>
-              );
+              </div>
+            );
 
             return filteredNotes.length > 0 ? (
               <>
@@ -313,35 +242,19 @@ const Home = () => {
                 {renderSection("This Month", monthNotes)}
                 {renderSection("Older Notes", olderNotes)}
               </>
-            ) : (
-              <p className="text-center text-gray-500 mt-10">No Notes</p>
-            );
+            ) : <p className="text-center text-gray-500 mt-10">No Notes</p>;
           })()}
         </div>
 
-        {/* Add Button */}
-        <button
-          onClick={() => setModalOpen(true)}
-          className="fixed bottom-8 right-8 bg-blue-600 text-white text-3xl px-4 py-2 rounded-full shadow-lg hover:bg-blue-700 transition"
-        >
-          +
-        </button>
+        <button onClick={() => setModalOpen(true)} className="fixed bottom-8 right-8 bg-blue-600 text-white text-3xl px-4 py-2 rounded-full shadow-lg hover:bg-blue-700 transition">+</button>
 
-        {isModalOpen && (
-          <NoteModal
-            closeModal={closeModal}
-            addNote={addNote}
-            currentNote={currentNote}
-            editNote={editNote}
-          />
-        )}
+        {isModalOpen && <NoteModal closeModal={closeModal} addNote={addNote} currentNote={currentNote} editNote={editNote} />}
       </div>
     </div>
   );
 };
 
 export default Home;
-
 
 
 
@@ -368,8 +281,10 @@ export default Home;
 //   const [currentNote, setCurrentNote] = useState(null);
 //   const [query, setQuery] = useState("");
 //   const [isSidebarOpen, setSidebarOpen] = useState(false);
+//   const [filter, setFilter] = useState(""); // ✅ Filter state
 //   const API_URL = import.meta.env.VITE_API_URL;
 
+//   // Fetch notes on user login
 //   useEffect(() => {
 //     if (user) fetchNotes();
 //     else {
@@ -378,15 +293,37 @@ export default Home;
 //     }
 //   }, [user]);
 
+//   // Apply search & filter
 //   useEffect(() => {
-//     setFilteredNotes(
-//       notes.filter(
-//         (note) =>
-//           note.title.toLowerCase().includes(query.toLowerCase()) ||
-//           note.description.toLowerCase().includes(query.toLowerCase())
-//       )
+//     let tempNotes = [...notes];
+
+//     // Search filter
+//     tempNotes = tempNotes.filter(
+//       (note) =>
+//         note.title.toLowerCase().includes(query.toLowerCase()) ||
+//         note.description.toLowerCase().includes(query.toLowerCase())
 //     );
-//   }, [query, notes]);
+
+//     // Apply dropdown filter
+//     switch (filter) {
+//       case "completed":
+//         tempNotes = tempNotes.filter((note) => note.completed);
+//         break;
+//       case "incomplete":
+//         tempNotes = tempNotes.filter((note) => !note.completed);
+//         break;
+//       case "dateAsc":
+//         tempNotes.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+//         break;
+//       case "dateDesc":
+//         tempNotes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+//         break;
+//       default:
+//         break;
+//     }
+
+//     setFilteredNotes(tempNotes);
+//   }, [query, notes, filter]);
 
 //   // Fetch all notes
 //   const fetchNotes = async () => {
@@ -469,7 +406,7 @@ export default Home;
 //     }
 //   };
 
-//   // Toggle completion ✅
+//   // Toggle completion
 //   const toggleCompletion = async (id) => {
 //     try {
 //       const token = localStorage.getItem("token");
@@ -493,15 +430,8 @@ export default Home;
 //     }
 //   };
 
-//   const onEdit = (note) => {
-//     setCurrentNote(note);
-//     setModalOpen(true);
-//   };
-
-//   const closeModal = () => {
-//     setCurrentNote(null);
-//     setModalOpen(false);
-//   };
+//   const onEdit = (note) => { setCurrentNote(note); setModalOpen(true); };
+//   const closeModal = () => { setCurrentNote(null); setModalOpen(false); };
 
 //   // Non-user homepage
 //   if (!user) {
@@ -579,19 +509,29 @@ export default Home;
 //           setSidebarOpen={setSidebarOpen}
 //         />
 
-//         {/* === GROUPED NOTES SECTION === */}
+//         {/* === FILTER DROPDOWN === */}
 //         <div
-//           className={`p-6 transition-all duration-300 ${
-//             isSidebarOpen ? "md:ml-64" : ""
-//           }`}
+//           className={`p-6 transition-all duration-300 ${isSidebarOpen ? "md:ml-64" : ""}`}
 //         >
+//           <div className="flex justify-end mb-4">
+//             <select
+//               value={filter}
+//               onChange={(e) => setFilter(e.target.value)}
+//               className="border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+//             >
+//               <option value="">All Notes</option>
+//               <option value="completed">Completed Work</option>
+//               <option value="incomplete">Incomplete Work</option>
+//               <option value="dateAsc">Date Uploaded (Ascending)</option>
+//               <option value="dateDesc">Date Uploaded (Descending)</option>
+//             </select>
+//           </div>
+
+//           {/* === GROUPED NOTES SECTION === */}
 //           {(() => {
-//             // Helper to categorize notes
 //             const now = new Date();
 //             const startOfToday = new Date(now.setHours(0, 0, 0, 0));
-//             const startOfWeek = new Date(
-//               now.setDate(now.getDate() - now.getDay())
-//             );
+//             const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
 //             const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
 //             const todayNotes = filteredNotes.filter(
