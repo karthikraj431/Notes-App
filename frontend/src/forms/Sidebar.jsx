@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { useAuth } from "../context/ContextProvider";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Sidebar = ({ isOpen, closeSidebar }) => {
   const { user, setUser, logout } = useAuth();
   const [prevPassword, setPrevPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [showPrevPassword, setShowPrevPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
   const API_URL = import.meta.env.VITE_API_URL;
 
   const handleChangePassword = async () => {
@@ -41,24 +44,38 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
       <h2 className="text-xl font-semibold mb-4">Profile</h2>
       <p className="mb-4">Hello, {user.name}</p>
 
-      <div className="mb-4">
+      {/* Previous Password */}
+      <div className="mb-4 relative">
         <label className="block mb-1 font-medium">Previous Password</label>
         <input
-          type="password"
+          type={showPrevPassword ? "text" : "password"}
           value={prevPassword}
           onChange={(e) => setPrevPassword(e.target.value)}
-          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 pr-10"
         />
+        <span
+          className="absolute top-9 right-3 cursor-pointer text-gray-500"
+          onClick={() => setShowPrevPassword(!showPrevPassword)}
+        >
+          {showPrevPassword ? <FaEyeSlash /> : <FaEye />}
+        </span>
       </div>
 
-      <div className="mb-4">
+      {/* New Password */}
+      <div className="mb-4 relative">
         <label className="block mb-1 font-medium">New Password</label>
         <input
-          type="password"
+          type={showNewPassword ? "text" : "password"}
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
-          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 pr-10"
         />
+        <span
+          className="absolute top-9 right-3 cursor-pointer text-gray-500"
+          onClick={() => setShowNewPassword(!showNewPassword)}
+        >
+          {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+        </span>
       </div>
 
       <button
@@ -90,264 +107,92 @@ export default Sidebar;
 
 
 
-// import React, { useState, useEffect } from "react";
+
+// import React, { useState } from "react";
 // import { useAuth } from "../context/ContextProvider";
 // import axios from "axios";
 // import { toast } from "react-toastify";
 
-// const Dashboard = ({ isOpen, onClose }) => {
-//   const { user, logout } = useAuth();
-//   const [recentNotes, setRecentNotes] = useState([]);
-//   const [password, setPassword] = useState("");
+// const Sidebar = ({ isOpen, closeSidebar }) => {
+//   const { user, setUser, logout } = useAuth();
+//   const [prevPassword, setPrevPassword] = useState("");
+//   const [newPassword, setNewPassword] = useState("");
 //   const API_URL = import.meta.env.VITE_API_URL;
 
-//   useEffect(() => {
-//     if (user && isOpen) fetchRecentNotes();
-//   }, [user, isOpen]);
-
-//   const fetchRecentNotes = async () => {
+//   const handleChangePassword = async () => {
 //     try {
 //       const token = localStorage.getItem("token");
-//       const { data } = await axios.get(`${API_URL}/api/note`, {
-//         headers: { Authorization: `Bearer ${token}` },
-//       });
-//       if (data.success) {
-//         setRecentNotes(data.notes.slice(-5).reverse()); // last 5 notes
-//       }
-//     } catch (error) {
-//       console.error(error);
-//       toast.error("Failed to fetch recent notes");
-//     }
-//   };
-
-//   const handlePasswordUpdate = async () => {
-//     try {
-//       if (password.length < 8) {
-//         toast.error("Password must be at least 8 characters");
-//         return;
-//       }
-//       const token = localStorage.getItem("token");
-//       const { data } = await axios.put(
-//         `${API_URL}/api/auth/update-password`,
-//         { password },
+//       const { data } = await axios.post(
+//         `${API_URL}/api/auth/change-password`,
+//         { prevPassword, newPassword },
 //         { headers: { Authorization: `Bearer ${token}` } }
 //       );
 //       if (data.success) {
 //         toast.success("Password updated successfully!");
-//         setPassword("");
+//         setPrevPassword("");
+//         setNewPassword("");
+//         closeSidebar();
+//         logout(); // force login again
+//       } else {
+//         toast.error(data.message);
 //       }
-//     } catch (error) {
-//       console.error(error);
-//       toast.error(error.response?.data?.message || "Failed to update password");
+//     } catch (err) {
+//       console.error(err);
+//       toast.error(err.response?.data?.message || "Failed to update password");
 //     }
 //   };
 
 //   return (
 //     <div
-//       className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 transform transition-transform duration-300 ${
+//       className={`fixed top-0 left-0 h-full bg-white shadow-lg w-64 p-6 transform transition-transform duration-300 ${
 //         isOpen ? "translate-x-0" : "-translate-x-full"
 //       }`}
 //     >
-//       <div className="p-4 flex justify-between items-center border-b">
-//         <h2 className="font-bold text-lg">Dashboard</h2>
-//         <button onClick={onClose} className="text-red-500 font-bold">
-//           X
-//         </button>
+//       <h2 className="text-xl font-semibold mb-4">Profile</h2>
+//       <p className="mb-4">Hello, {user.name}</p>
+
+//       <div className="mb-4">
+//         <label className="block mb-1 font-medium">Previous Password</label>
+//         <input
+//           type="password"
+//           value={prevPassword}
+//           onChange={(e) => setPrevPassword(e.target.value)}
+//           className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+//         />
 //       </div>
 
-//       <div className="p-4 space-y-4">
-//         <div>
-//           <h3 className="font-semibold">Profile</h3>
-//           <p>Name: {user?.name}</p>
-//           <p>Email: {user?.email}</p>
-//         </div>
-
-//         <div>
-//           <h3 className="font-semibold">Update Password</h3>
-//           <input
-//             type="password"
-//             placeholder="New Password"
-//             value={password}
-//             onChange={(e) => setPassword(e.target.value)}
-//             className="w-full p-2 border rounded mb-2"
-//           />
-//           <button
-//             onClick={handlePasswordUpdate}
-//             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-//           >
-//             Update
-//           </button>
-//         </div>
-
-//         <div>
-//           <h3 className="font-semibold">Recent Notes</h3>
-//           <ul className="list-disc ml-4 space-y-1 max-h-48 overflow-y-auto">
-//             {recentNotes.length > 0 ? (
-//               recentNotes.map((note) => (
-//                 <li key={note._id}>{note.title}</li>
-//               ))
-//             ) : (
-//               <p className="text-gray-500 text-sm">No recent notes</p>
-//             )}
-//           </ul>
-//         </div>
-
-//         <button
-//           onClick={logout}
-//           className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition"
-//         >
-//           Logout
-//         </button>
+//       <div className="mb-4">
+//         <label className="block mb-1 font-medium">New Password</label>
+//         <input
+//           type="password"
+//           value={newPassword}
+//           onChange={(e) => setNewPassword(e.target.value)}
+//           className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+//         />
 //       </div>
+
+//       <button
+//         onClick={handleChangePassword}
+//         className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+//       >
+//         Update Password
+//       </button>
+
+//       <button
+//         onClick={logout}
+//         className="w-full mt-4 bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition"
+//       >
+//         Logout
+//       </button>
+
+//       <button
+//         onClick={closeSidebar}
+//         className="absolute top-4 right-4 text-gray-600 hover:text-gray-900"
+//       >
+//         ✕
+//       </button>
 //     </div>
 //   );
 // };
 
-// export default Dashboard;
-
-
-
-
-
-
-// // import React, { useEffect, useState } from "react";
-// // import { useAuth } from "../context/ContextProvider";
-// // import axios from "axios";
-// // import { toast } from "react-toastify";
-// // import Navbar from "./Navbar";
-
-// // const Dashboard = () => {
-// //   const { user, logout } = useAuth();
-// //   const [notes, setNotes] = useState([]);
-// //   const [oldPassword, setOldPassword] = useState("");
-// //   const [newPassword, setNewPassword] = useState("");
-// //   const [confirmPassword, setConfirmPassword] = useState("");
-// //   const API_URL = import.meta.env.VITE_API_URL;
-
-// //   useEffect(() => {
-// //     fetchNotes();
-// //   }, []);
-
-// //   // Fetch user notes
-// //   const fetchNotes = async () => {
-// //     try {
-// //       const token = localStorage.getItem("token");
-// //       if (!token) return;
-
-// //       const { data } = await axios.get(`${API_URL}/api/note`, {
-// //         headers: { Authorization: `Bearer ${token}` },
-// //       });
-// //       if (data.success) setNotes(data.notes);
-// //     } catch (error) {
-// //       console.error(error);
-// //       toast.error("Failed to fetch notes");
-// //     }
-// //   };
-
-// //   // Update password
-// //   const handlePasswordUpdate = async (e) => {
-// //     e.preventDefault();
-// //     if (newPassword !== confirmPassword) {
-// //       toast.error("New password and confirm password do not match");
-// //       return;
-// //     }
-// //     try {
-// //       const token = localStorage.getItem("token");
-// //       const { data } = await axios.put(
-// //         `${API_URL}/api/auth/update-password`,
-// //         { oldPassword, newPassword },
-// //         { headers: { Authorization: `Bearer ${token}` } }
-// //       );
-// //       if (data.success) {
-// //         toast.success("Password updated successfully!");
-// //         setOldPassword("");
-// //         setNewPassword("");
-// //         setConfirmPassword("");
-// //       } else {
-// //         toast.error(data.message);
-// //       }
-// //     } catch (error) {
-// //       console.error(error);
-// //       toast.error(error.response?.data?.message || "Password update failed");
-// //     }
-// //   };
-
-// //   return (
-// //     <div className="min-h-screen bg-gray-50">
-// //       <Navbar />
-// //       <div className="max-w-5xl mx-auto p-6">
-// //         <h2 className="text-3xl font-bold mb-6">Dashboard</h2>
-
-// //         {/* Profile Section */}
-// //         <div className="bg-white p-6 rounded-lg shadow mb-6">
-// //           <h3 className="text-2xl font-semibold mb-4">Profile</h3>
-// //           <p><strong>Name:</strong> {user?.name}</p>
-// //           <p><strong>Email:</strong> {user?.email}</p>
-// //         </div>
-
-// //         {/* Update Password */}
-// //         <div className="bg-white p-6 rounded-lg shadow mb-6">
-// //           <h3 className="text-2xl font-semibold mb-4">Update Password</h3>
-// //           <form onSubmit={handlePasswordUpdate} className="flex flex-col gap-4">
-// //             <input
-// //               type="password"
-// //               placeholder="Old Password"
-// //               value={oldPassword}
-// //               onChange={(e) => setOldPassword(e.target.value)}
-// //               className="p-2 border rounded"
-// //               required
-// //             />
-// //             <input
-// //               type="password"
-// //               placeholder="New Password"
-// //               value={newPassword}
-// //               onChange={(e) => setNewPassword(e.target.value)}
-// //               className="p-2 border rounded"
-// //               required
-// //             />
-// //             <input
-// //               type="password"
-// //               placeholder="Confirm New Password"
-// //               value={confirmPassword}
-// //               onChange={(e) => setConfirmPassword(e.target.value)}
-// //               className="p-2 border rounded"
-// //               required
-// //             />
-// //             <button
-// //               type="submit"
-// //               className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition"
-// //             >
-// //               Update Password
-// //             </button>
-// //           </form>
-// //         </div>
-
-// //         {/* Recent Notes */}
-// //         <div className="bg-white p-6 rounded-lg shadow mb-6">
-// //           <h3 className="text-2xl font-semibold mb-4">Recent Notes</h3>
-// //           {notes.length > 0 ? (
-// //             <ul className="list-disc pl-5">
-// //               {notes.map((note) => (
-// //                 <li key={note._id} className="mb-2">
-// //                   <strong>{note.title}</strong> - {new Date(note.createdAt).toLocaleDateString()}
-// //                 </li>
-// //               ))}
-// //             </ul>
-// //           ) : (
-// //             <p>No notes found</p>
-// //           )}
-// //         </div>
-
-// //         {/* Logout Button */}
-// //         <button
-// //           onClick={logout}
-// //           className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition"
-// //         >
-// //           Logout
-// //         </button>
-// //       </div>
-// //     </div>
-// //   );
-// // };
-
-// // export default Dashboard;
+// export default Sidebar;
