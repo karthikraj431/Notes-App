@@ -1,9 +1,19 @@
 import React from "react";
 import { useAuth } from "../context/ContextProvider";
 import { motion } from "framer-motion";
+import { FaCalendarAlt } from "react-icons/fa";
 
 const Navbar = ({ setQuery, isSidebarOpen, setSidebarOpen, filter, setFilter }) => {
   const { user } = useAuth();
+
+  // Get current date
+  const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 
   return (
     <motion.nav
@@ -46,6 +56,14 @@ const Navbar = ({ setQuery, isSidebarOpen, setSidebarOpen, filter, setFilter }) 
           <option value="dateAsc">Date Uploaded (Ascending)</option>
           <option value="dateDesc">Date Uploaded (Descending)</option>
         </select>
+
+        {/* Calendar Icon with Date */}
+        {user && (
+          <div className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-lg border border-gray-300">
+            <FaCalendarAlt className="text-blue-600" />
+            <span className="text-sm font-medium">{formattedDate}</span>
+          </div>
+        )}
       </div>
     </motion.nav>
   );
@@ -57,18 +75,11 @@ export default Navbar;
 
 
 
-
-
-
-
-
-
-
 // import React from "react";
 // import { useAuth } from "../context/ContextProvider";
 // import { motion } from "framer-motion";
 
-// const Navbar = ({ setQuery, isSidebarOpen, setSidebarOpen }) => {
+// const Navbar = ({ setQuery, isSidebarOpen, setSidebarOpen, filter, setFilter }) => {
 //   const { user } = useAuth();
 
 //   return (
@@ -91,12 +102,28 @@ export default Navbar;
 //         {user && <span className="font-medium">Welcome {user.name.split(" ")[0]}</span>}
 //       </div>
 
-//       <input
-//         type="text"
-//         placeholder="Search notes..."
-//         onChange={(e) => setQuery(e.target.value)}
-//         className="px-3 py-1 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-//       />
+//       <div className="flex items-center gap-4">
+//         {/* Search Input */}
+//         <input
+//           type="text"
+//           placeholder="Search notes..."
+//           onChange={(e) => setQuery(e.target.value)}
+//           className="px-3 py-1 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+//         />
+
+//         {/* Filter Dropdown */}
+//         <select
+//           value={filter}
+//           onChange={(e) => setFilter(e.target.value)}
+//           className="border px-3 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+//         >
+//           <option value="">All Notes</option>
+//           <option value="completed">Completed Work</option>
+//           <option value="incomplete">Incomplete Work</option>
+//           <option value="dateAsc">Date Uploaded (Ascending)</option>
+//           <option value="dateDesc">Date Uploaded (Descending)</option>
+//         </select>
+//       </div>
 //     </motion.nav>
 //   );
 // };
