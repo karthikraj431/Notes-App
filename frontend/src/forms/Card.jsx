@@ -18,7 +18,7 @@ const Card = ({ note, onEdit, deleteNote, toggleCompletion }) => {
             onClick={() => toggleCompletion(note._id)}
             className="text-yellow-600 hover:text-yellow-800 text-sm"
           >
-            Toggle
+            Progress
           </button>
 
           <button onClick={() => onEdit(note)} className="text-blue-500 hover:text-blue-700">
