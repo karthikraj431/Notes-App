@@ -207,40 +207,56 @@ const Home = () => {
     .slice(0,5);
 
   if (!user) {
-    return (
-      <div className="min-h-screen flex bg-gray-50 font-sans">
-        <div className="flex flex-1">
-          {/* Left Half */}
-          <div className="flex-1 bg-indigo-50 flex flex-col items-center justify-center p-10 text-center">
-            <div className="text-6xl mb-6">🔖</div>
-            <h2 className="text-4xl font-bold mb-4">“Capture your thoughts, shape your ideas, and never lose a note again.”</h2>
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50 font-sans">
+      {/* Navbar */}
+      <nav className="w-full bg-white shadow-md py-4 px-6 flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-indigo-600">NOTES</h1>
+        <div className="flex items-center gap-4">
+          <Link to="/login" className="text-gray-700 font-medium hover:text-indigo-600 transition">Login</Link>
+          <Link to="/signup" className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition">Signup</Link>
+        </div>
+      </nav>
+
+      {/* Page Content */}
+      <main className="flex-1 flex px-6 py-10">
+        {/* Left Half */}
+        <div className="flex-1 flex flex-col items-center justify-center bg-indigo-50 rounded-xl p-10 text-center mr-4">
+          <div className="text-6xl mb-6">🔖</div>
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">
+            “Capture your thoughts, shape your ideas, and never lose a note again.”
+          </h2>
+          <p className="text-gray-600">A simple, elegant place to keep your ideas organized.</p>
+        </div>
+
+        {/* Right Half */}
+        <div className="flex-1 flex flex-col space-y-4">
+          {/* Users List */}
+          <div className="flex-1 bg-white shadow rounded-xl p-6 overflow-y-auto">
+            <h3 className="font-semibold text-gray-700 mb-3 text-lg">Our Users</h3>
+            <ul className="list-disc pl-5 space-y-1">
+              {usersList.length > 0 ? usersList.map((u)=>(
+                <li key={u._id}>{u.name}</li>
+              )) : <li className="text-gray-400">No users yet</li>}
+            </ul>
           </div>
-          {/* Right Half */}
-          <div className="flex-1 flex flex-col p-6">
-            {/* Users */}
-            <div className="flex-1 mb-4 bg-white shadow rounded p-4">
-              <h3 className="font-semibold mb-3">Our Users</h3>
-              <ul className="list-disc pl-5 space-y-1">
-                {usersList.length > 0 ? usersList.map((u)=>(
-                  <li key={u._id}>{u.name}</li>
-                )) : <li>No users yet</li>}
-              </ul>
-            </div>
-            {/* Feedback */}
-            <div className="flex-1 bg-white shadow rounded p-4 overflow-y-auto">
-              <h3 className="font-semibold mb-3">User Feedback</h3>
-              {feedbackList.length > 0 ? feedbackList.map((f,i)=>(
-                <div key={i} className="border-b py-2">
-                  <div className="text-yellow-400">{'★'.repeat(f.rating) + '☆'.repeat(5-f.rating)}</div>
-                  <p className="text-gray-700">{f.comment}</p>
-                </div>
-              )) : <p className="text-gray-400">No feedback yet</p>}
-            </div>
+
+          {/* Feedback */}
+          <div className="flex-1 bg-white shadow rounded-xl p-6 overflow-y-auto">
+            <h3 className="font-semibold text-gray-700 mb-3 text-lg">User Feedback</h3>
+            {feedbackList.length > 0 ? feedbackList.map((f,i)=>(
+              <div key={i} className="border-b py-2">
+                <div className="text-yellow-400">{'★'.repeat(f.rating) + '☆'.repeat(5-f.rating)}</div>
+                <p className="text-gray-700">{f.comment}</p>
+              </div>
+            )) : <p className="text-gray-400">No feedback yet</p>}
           </div>
         </div>
-      </div>
-    );
-  }
+      </main>
+    </div>
+  );
+}
+
 
   // Logged-in user page
   return (
