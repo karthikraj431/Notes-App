@@ -18,6 +18,8 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/note", noteRouter);
 
+app.use("/api/feedback", feedbackRoutes);
+
 // Connect to MongoDB Atlas
 connectToMongoDB();
 
@@ -27,4 +29,3 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-app.use("/api/feedback", feedbackRoutes);
