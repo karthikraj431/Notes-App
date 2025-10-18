@@ -260,17 +260,17 @@ const Home = () => {
         <div className="border-t px-4 py-4 space-y-3">
           {/* Reset Password */}
           <button onClick={() => toast.info("Password reset popup here")} className="w-full flex items-center justify-between px-3 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition">
-            Reset Password <span>🔒</span>
+            Reset Password 
           </button>
 
           {/* Feedback */}
           <button onClick={() => setFeedbackModalOpen(true)} className="w-full flex items-center justify-between px-3 py-2 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition">
-            Feedback <span>⭐</span>
+            Feedback 
           </button>
 
           {/* Logout */}
           <button onClick={() => { localStorage.removeItem("token"); window.location.href = "/"; }} className="w-full flex items-center justify-between px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition">
-            Logout <span>🚪</span>
+            Logout 
           </button>
         </div>
       </aside>
