@@ -6,6 +6,7 @@ import cors from "cors";
 import authRouter from "./routes/Auth.js";
 import noteRouter from "./routes/note.js";
 import connectToMongoDB from "./mongo/db.js";
+import feedbackRoutes from "./routes/feedback.js";
 
 const app = express();
 
@@ -25,3 +26,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+app.use("/api/feedback", feedbackRoutes);
