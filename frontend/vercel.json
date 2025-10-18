@@ -4,10 +4,16 @@
     {
       "src": "package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "build" }
+      "config": {
+        "distDir": "dist"
+      }
     }
   ],
   "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "https://notes-app-backend-7fac.onrender.com/api/$1"
+    },
     {
       "src": "/(.*)",
       "dest": "/index.html"
