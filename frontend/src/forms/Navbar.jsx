@@ -115,7 +115,7 @@ const Navbar = ({
           )}
         </div>
 
-        {/* Calendar */}
+        {/* Calendar
         <div className="relative" ref={calendarRef}>
           <button
             onClick={() => setCalendarOpen((s) => !s)}
@@ -151,7 +151,7 @@ const Navbar = ({
               </button>
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* New Note */}
         <button
