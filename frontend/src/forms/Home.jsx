@@ -18,6 +18,7 @@ const Home = () => {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
+  const [feedbacks, setFeedbacks] = useState([]);
   const API_URL = import.meta.env.VITE_API_URL;
 
   // Fetch notes on login
@@ -26,6 +27,7 @@ const Home = () => {
     else {
       setNotes([]);
       setFilteredNotes([]);
+      fetchFeedbacks();
     }
   }, [user]);
 
@@ -49,10 +51,19 @@ const Home = () => {
     }
   };
 
+  // Fetch feedbacks for non-user view
+  const fetchFeedbacks = async () => {
+    try {
+      const { data } = await axios.get(`${API_URL}/api/feedback`);
+      if (data.success) setFeedbacks(data.feedbacks);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // Apply filters and search
   const applySearchFilter = () => {
     let temp = [...notes];
-
     if (query) {
       const q = query.toLowerCase();
       temp = temp.filter(
@@ -90,7 +101,7 @@ const Home = () => {
     setFilteredNotes(temp);
   };
 
-  // CRUD actions
+  // CRUD actions (add/edit/delete/toggle)
   const addNote = async (title, description, scheduleDate) => {
     try {
       const token = localStorage.getItem("token");
@@ -104,7 +115,6 @@ const Home = () => {
         fetchNotes();
         setModalOpen(false);
         toast.success("Note added successfully!");
-        // Ask for feedback automatically
         setTimeout(() => setFeedbackModalOpen(true), 500);
       }
     } catch (error) {
@@ -197,7 +207,7 @@ const Home = () => {
   const submitFeedback = (rating, comment) => {
     toast.success(`Feedback submitted: ${rating}⭐`);
     console.log("Feedback submitted:", rating, comment);
-    // TODO: save feedback via API
+    // TODO: store feedback in backend
   };
 
   const now = new Date();
@@ -211,133 +221,88 @@ const Home = () => {
     .sort((a, b) => new Date(a.scheduleDate) - new Date(b.scheduleDate))
     .slice(0, 5);
 
+  // ---------- NON-USER VIEW ----------
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50 font-sans">
-        <nav className="w-full bg-white shadow-md py-4 px-6 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-indigo-600">NOTES</h1>
-          <div className="flex items-center gap-4">
-            <Link to="/login" className="text-gray-700 font-medium hover:text-indigo-600 transition">Login</Link>
-            <Link to="/signup" className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition">Signup</Link>
-          </div>
-        </nav>
-        <main className="flex-1 flex items-center justify-center px-8 py-20">
-          <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h2 className="text-4xl font-extrabold text-gray-800 mb-4">
-                “Capture your thoughts, shape your ideas, and never lose a note again.”
-              </h2>
-              <p className="text-gray-600">A simple, elegant place to keep your ideas organized.</p>
+        {/* Navbar */}
+        <Navbar
+          setQuery={() => {}}
+          onFilterSelect={() => {}}
+          currentFilter=""
+          onDateSelect={() => {}}
+          onNewNoteClick={() => {}}
+        />
+
+        {/* Split Content */}
+        <main className="flex-1 flex px-8 py-10 gap-8">
+          {/* Left Half: Quote + Logo */}
+          <div className="flex-1 flex flex-col items-center justify-center bg-white rounded-2xl shadow p-10">
+            <div className="mb-6">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-16 w-16 text-indigo-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 5v14l7-7 7 7V5H5z" />
+              </svg>
             </div>
-            <div className="bg-white rounded-2xl shadow p-10 flex flex-col items-center justify-center">
-              <h3 className="text-2xl font-semibold mb-4">Get started</h3>
-              <p className="text-gray-600 text-center mb-6">Sign up to create, edit and manage personal notes.</p>
-              <Link to="/signup" className="bg-indigo-600 text-white px-6 py-3 rounded-lg">Sign Up</Link>
+            <h2 className="text-3xl font-extrabold text-gray-800 mb-4 text-center">
+              “Capture your thoughts, shape your ideas, and never lose a note again.”
+            </h2>
+            <p className="text-gray-600 text-center">
+              A simple, elegant place to keep your ideas organized.
+            </p>
+          </div>
+
+          {/* Right Half: Users & Feedback */}
+          <div className="flex-1 flex flex-col bg-white rounded-2xl shadow p-10">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+              Our Users and Their Feedback
+            </h2>
+            <div className="space-y-4 overflow-y-auto max-h-[500px]">
+              {feedbacks.length > 0 ? (
+                feedbacks.map((fb) => (
+                  <div key={fb._id} className="border rounded-lg p-4 shadow-sm">
+                    <p className="font-semibold text-gray-700">{fb.userName}</p>
+                    <p className="text-yellow-500">{`${"⭐".repeat(fb.rating)}`}</p>
+                    <p className="text-gray-600">{fb.comment}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-400 text-center">No feedback yet</p>
+              )}
             </div>
           </div>
         </main>
+
+        {/* Footer Signup/Login */}
+        <div className="flex justify-center gap-4 py-8">
+          <Link
+            to="/login"
+            className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+          >
+            Login
+          </Link>
+          <Link
+            to="/signup"
+            className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+          >
+            Signup
+          </Link>
+        </div>
       </div>
     );
   }
 
+  // ---------- LOGGED-IN USER VIEW ----------
   return (
     <div className="min-h-screen flex bg-gray-50 text-gray-800">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white border-r flex flex-col">
-        <div className="px-6 py-6 border-b">
-          <h1 className="text-2xl font-bold text-indigo-600">NOTES</h1>
-        </div>
-        <div className="flex-1 overflow-y-auto px-4 py-4">
-          <h2 className="text-sm font-semibold text-gray-500 mb-3">My Notes</h2>
-          <div className="space-y-2">
-            {notes.length > 0 ? notes.map((note) => (
-              <button key={note._id} onClick={() => onEdit(note)} className="w-full text-left px-3 py-2 rounded-lg hover:bg-indigo-50 transition">
-                <p className="font-medium text-gray-700 truncate">{note.title}</p>
-              </button>
-            )) : <p className="text-gray-400 text-sm">No notes yet</p>}
-          </div>
-        </div>
-        <div className="border-t px-4 py-4 space-y-3">
-          {/* Reset Password */}
-          <button onClick={() => toast.info("Password reset popup here")} className="w-full flex items-center justify-between px-3 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition">
-            Reset Password 
-          </button>
-
-          {/* Feedback */}
-          <button onClick={() => setFeedbackModalOpen(true)} className="w-full flex items-center justify-between px-3 py-2 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition">
-            Feedback 
-          </button>
-
-          {/* Logout */}
-          <button onClick={() => { localStorage.removeItem("token"); window.location.href = "/"; }} className="w-full flex items-center justify-between px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition">
-            Logout 
-          </button>
-        </div>
-      </aside>
-
-      {/* Main */}
-      <div className="flex-1 flex flex-col">
-        <Navbar
-          setQuery={setQuery}
-          onFilterSelect={setFilter}
-          currentFilter={filter}
-          onDateSelect={setDateFilter}
-          onNewNoteClick={handleNewNoteClick}
-        />
-        <main className="flex-1 px-8 py-6 overflow-y-auto">
-          <div className="max-w-7xl mx-auto space-y-8">
-            {/* Coming Up */}
-            <section>
-              <h2 className="text-lg font-semibold text-gray-700 mb-3">Coming Up</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {comingUpNotes.length > 0 ? comingUpNotes.map((note) => (
-                  <Card
-                    key={note._id}
-                    note={note}
-                    onEdit={onEdit}
-                    deleteNote={deleteNote}
-                    toggleCompletion={toggleCompletion}
-                    toggleFavorite={toggleFavorite}
-                  />
-                )) : <p className="text-gray-400">No upcoming notes</p>}
-              </div>
-            </section>
-
-            {/* Today */}
-            <section>
-              <h2 className="text-lg font-semibold text-gray-700 mb-3">Today</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {todayNotes.length > 0 ? todayNotes.map((note) => (
-                  <Card
-                    key={note._id}
-                    note={note}
-                    onEdit={onEdit}
-                    deleteNote={deleteNote}
-                    toggleCompletion={toggleCompletion}
-                    toggleFavorite={toggleFavorite}
-                  />
-                )) : <p className="text-gray-400">No notes for today</p>}
-              </div>
-            </section>
-          </div>
-        </main>
-      </div>
-
-      {isModalOpen && (
-        <NoteModal
-          closeModal={closeModal}
-          addNote={addNote}
-          currentNote={currentNote}
-          editNote={editNote}
-        />
-      )}
-
-      {isFeedbackModalOpen && (
-        <FeedbackModal
-          closeModal={() => setFeedbackModalOpen(false)}
-          submitFeedback={submitFeedback}
-        />
-      )}
+      {/* ... existing user dashboard ... */}
+      {/* (your existing sidebar, notes sections, modals, etc.) */}
     </div>
   );
 };
@@ -347,11 +312,13 @@ export default Home;
 
 
 
-// import React, { useEffect, useState } from "react"; 
+
+
+// import React, { useEffect, useState } from "react";
 // import Navbar from "./Navbar";
 // import NoteModal from "./NoteModal";
-// import Card from "./Card";
 // import FeedbackModal from "./FeedbackModal";
+// import Card from "./Card";
 // import axios from "axios";
 // import { toast } from "react-toastify";
 // import { useAuth } from "../context/ContextProvider";
@@ -362,15 +329,14 @@ export default Home;
 //   const [notes, setNotes] = useState([]);
 //   const [filteredNotes, setFilteredNotes] = useState([]);
 //   const [isModalOpen, setModalOpen] = useState(false);
+//   const [isFeedbackModalOpen, setFeedbackModalOpen] = useState(false);
 //   const [currentNote, setCurrentNote] = useState(null);
 //   const [query, setQuery] = useState("");
 //   const [filter, setFilter] = useState("");
 //   const [dateFilter, setDateFilter] = useState("");
-//   const [isFeedbackOpen, setFeedbackOpen] = useState(false);
-//   const [usersList, setUsersList] = useState([]);
-//   const [feedbackList, setFeedbackList] = useState([]);
 //   const API_URL = import.meta.env.VITE_API_URL;
 
+//   // Fetch notes on login
 //   useEffect(() => {
 //     if (user) fetchNotes();
 //     else {
@@ -379,14 +345,12 @@ export default Home;
 //     }
 //   }, [user]);
 
+//   // Re-filter whenever notes/search/filter/date change
 //   useEffect(() => {
 //     applySearchFilter();
 //   }, [notes, query, filter, dateFilter]);
 
-//   useEffect(() => {
-//     fetchUsersAndFeedback();
-//   }, []);
-
+//   // Fetch all notes
 //   const fetchNotes = async () => {
 //     try {
 //       const token = localStorage.getItem("token");
@@ -396,22 +360,15 @@ export default Home;
 //       });
 //       if (data.success) setNotes(data.notes);
 //     } catch (error) {
+//       console.error(error);
 //       toast.error("Failed to fetch notes");
 //     }
 //   };
 
-//   const fetchUsersAndFeedback = async () => {
-//     try {
-//       const { data } = await axios.get(`${API_URL}/api/users`);
-//       if (data.success) {
-//         setUsersList(data.users);
-//         setFeedbackList(data.feedback || []);
-//       }
-//     } catch {}
-//   };
-
+//   // Apply filters and search
 //   const applySearchFilter = () => {
 //     let temp = [...notes];
+
 //     if (query) {
 //       const q = query.toLowerCase();
 //       temp = temp.filter(
@@ -420,6 +377,7 @@ export default Home;
 //           n.description.toLowerCase().includes(q)
 //       );
 //     }
+
 //     const now = new Date();
 //     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
@@ -444,9 +402,11 @@ export default Home;
 //         return `${yyyy}-${mm}-${dd}` === dateFilter;
 //       });
 //     }
+
 //     setFilteredNotes(temp);
 //   };
 
+//   // CRUD actions
 //   const addNote = async (title, description, scheduleDate) => {
 //     try {
 //       const token = localStorage.getItem("token");
@@ -460,8 +420,8 @@ export default Home;
 //         fetchNotes();
 //         setModalOpen(false);
 //         toast.success("Note added successfully!");
-//         // Auto feedback popup
-//         if (window.confirm("Would you like to leave feedback?")) setFeedbackOpen(true);
+//         // Ask for feedback automatically
+//         setTimeout(() => setFeedbackModalOpen(true), 500);
 //       }
 //     } catch (error) {
 //       toast.error(error.response?.data?.message || "Failed to add note");
@@ -486,24 +446,6 @@ export default Home;
 //     }
 //   };
 
-//   const submitFeedback = async ({ rating, comment }) => {
-//     try {
-//       const token = localStorage.getItem("token");
-//       if (!token) return;
-//       const { data } = await axios.post(
-//         `${API_URL}/api/feedback`,
-//         { rating, comment },
-//         { headers: { Authorization: `Bearer ${token}` } }
-//       );
-//       if (data.success) {
-//         toast.success("Feedback submitted!");
-//         fetchUsersAndFeedback();
-//       }
-//     } catch {
-//       toast.error("Failed to submit feedback");
-//     }
-//   };
-
 //   const deleteNote = async (id) => {
 //     try {
 //       const token = localStorage.getItem("token");
@@ -514,100 +456,106 @@ export default Home;
 //         toast.success("Note deleted successfully!");
 //         fetchNotes();
 //       }
-//     } catch {
-//       toast.error("Failed to delete note");
+//     } catch (error) {
+//       toast.error(error.response?.data?.message || "Failed to delete note");
 //     }
 //   };
 
 //   const toggleCompletion = async (id) => {
 //     try {
 //       const token = localStorage.getItem("token");
-//       const { data } = await axios.put(`${API_URL}/api/note/toggle/${id}`, {}, {
-//         headers: { Authorization: `Bearer ${token}` },
-//       });
-//       if (data.success) setNotes((prev) => prev.map((n) => (n._id === id ? data.note : n)));
-//     } catch { toast.error("Failed to update note"); }
+//       const { data } = await axios.put(
+//         `${API_URL}/api/note/toggle/${id}`,
+//         {},
+//         { headers: { Authorization: `Bearer ${token}` } }
+//       );
+//       if (data.success) {
+//         setNotes((prev) => prev.map((n) => (n._id === id ? data.note : n)));
+//         toast.success(`Note marked as ${data.note.completed ? "Completed" : "Not Completed"}`);
+//       }
+//     } catch {
+//       toast.error("Failed to update note status");
+//     }
 //   };
 
 //   const toggleFavorite = async (id) => {
 //     try {
 //       const token = localStorage.getItem("token");
-//       const { data } = await axios.put(`${API_URL}/api/note/favorite/${id}`, {}, {
-//         headers: { Authorization: `Bearer ${token}` },
-//       });
-//       if (data.success) setNotes((prev) => prev.map((n) => (n._id === id ? data.note : n)));
-//     } catch { toast.error("Failed to toggle favorite"); }
+//       const { data } = await axios.put(
+//         `${API_URL}/api/note/favorite/${id}`,
+//         {},
+//         { headers: { Authorization: `Bearer ${token}` } }
+//       );
+//       if (data.success) {
+//         setNotes((prev) => prev.map((n) => (n._id === id ? data.note : n)));
+//         toast.success(data.note.favorite ? "Marked as favorite" : "Removed from favorite");
+//       }
+//     } catch {
+//       toast.error("Failed to toggle favorite");
+//     }
 //   };
 
-//   const handleNewNoteClick = () => { setCurrentNote(null); setModalOpen(true); };
-//   const onEdit = (note) => { setCurrentNote(note); setModalOpen(true); };
-//   const closeModal = () => { setCurrentNote(null); setModalOpen(false); };
-//   const closeFeedback = () => setFeedbackOpen(false);
+//   // Note modal controls
+//   const handleNewNoteClick = () => {
+//     setCurrentNote(null);
+//     setModalOpen(true);
+//   };
+//   const onEdit = (note) => {
+//     setCurrentNote(note);
+//     setModalOpen(true);
+//   };
+//   const closeModal = () => {
+//     setCurrentNote(null);
+//     setModalOpen(false);
+//   };
+
+//   // Feedback submission
+//   const submitFeedback = (rating, comment) => {
+//     toast.success(`Feedback submitted: ${rating}⭐`);
+//     console.log("Feedback submitted:", rating, comment);
+//     // TODO: save feedback via API
+//   };
 
 //   const now = new Date();
 //   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
 //   const todayNotes = filteredNotes.filter((n) => new Date(n.createdAt) >= startOfToday);
-
-//   const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1); tomorrow.setHours(0,0,0,0);
+//   const tomorrow = new Date();
+//   tomorrow.setDate(tomorrow.getDate() + 1);
+//   tomorrow.setHours(0, 0, 0, 0);
 //   const comingUpNotes = filteredNotes
 //     .filter((n) => n.scheduleDate && new Date(n.scheduleDate) >= tomorrow)
-//     .sort((a,b)=>new Date(a.scheduleDate)-new Date(b.scheduleDate))
-//     .slice(0,5);
+//     .sort((a, b) => new Date(a.scheduleDate) - new Date(b.scheduleDate))
+//     .slice(0, 5);
 
 //   if (!user) {
-//   return (
-//     <div className="min-h-screen flex flex-col bg-gray-50 font-sans">
-//       {/* Navbar */}
-//       <nav className="w-full bg-white shadow-md py-4 px-6 flex justify-between items-center">
-//         <h1 className="text-2xl font-bold text-indigo-600">NOTES</h1>
-//         <div className="flex items-center gap-4">
-//           <Link to="/login" className="text-gray-700 font-medium hover:text-indigo-600 transition">Login</Link>
-//           <Link to="/signup" className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition">Signup</Link>
-//         </div>
-//       </nav>
-
-//       {/* Page Content */}
-//       <main className="flex-1 flex px-6 py-10">
-//         {/* Left Half */}
-//         <div className="flex-1 flex flex-col items-center justify-center bg-indigo-50 rounded-xl p-10 text-center mr-4">
-//           <div className="text-6xl mb-6">🔖</div>
-//           <h2 className="text-4xl font-bold text-gray-800 mb-4">
-//             “Capture your thoughts, shape your ideas, and never lose a note again.”
-//           </h2>
-//           <p className="text-gray-600">A simple, elegant place to keep your ideas organized.</p>
-//         </div>
-
-//         {/* Right Half */}
-//         <div className="flex-1 flex flex-col space-y-4">
-//           {/* Users List */}
-//           <div className="flex-1 bg-white shadow rounded-xl p-6 overflow-y-auto">
-//             <h3 className="font-semibold text-gray-700 mb-3 text-lg">Our Users</h3>
-//             <ul className="list-disc pl-5 space-y-1">
-//               {usersList.length > 0 ? usersList.map((u)=>(
-//                 <li key={u._id}>{u.name}</li>
-//               )) : <li className="text-gray-400">No users yet</li>}
-//             </ul>
+//     return (
+//       <div className="min-h-screen flex flex-col bg-gray-50 font-sans">
+//         <nav className="w-full bg-white shadow-md py-4 px-6 flex justify-between items-center">
+//           <h1 className="text-2xl font-bold text-indigo-600">NOTES</h1>
+//           <div className="flex items-center gap-4">
+//             <Link to="/login" className="text-gray-700 font-medium hover:text-indigo-600 transition">Login</Link>
+//             <Link to="/signup" className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition">Signup</Link>
 //           </div>
-
-//           {/* Feedback */}
-//           <div className="flex-1 bg-white shadow rounded-xl p-6 overflow-y-auto">
-//             <h3 className="font-semibold text-gray-700 mb-3 text-lg">User Feedback</h3>
-//             {feedbackList.length > 0 ? feedbackList.map((f,i)=>(
-//               <div key={i} className="border-b py-2">
-//                 <div className="text-yellow-400">{'★'.repeat(f.rating) + '☆'.repeat(5-f.rating)}</div>
-//                 <p className="text-gray-700">{f.comment}</p>
-//               </div>
-//             )) : <p className="text-gray-400">No feedback yet</p>}
+//         </nav>
+//         <main className="flex-1 flex items-center justify-center px-8 py-20">
+//           <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-8">
+//             <div>
+//               <h2 className="text-4xl font-extrabold text-gray-800 mb-4">
+//                 “Capture your thoughts, shape your ideas, and never lose a note again.”
+//               </h2>
+//               <p className="text-gray-600">A simple, elegant place to keep your ideas organized.</p>
+//             </div>
+//             <div className="bg-white rounded-2xl shadow p-10 flex flex-col items-center justify-center">
+//               <h3 className="text-2xl font-semibold mb-4">Get started</h3>
+//               <p className="text-gray-600 text-center mb-6">Sign up to create, edit and manage personal notes.</p>
+//               <Link to="/signup" className="bg-indigo-600 text-white px-6 py-3 rounded-lg">Sign Up</Link>
+//             </div>
 //           </div>
-//         </div>
-//       </main>
-//     </div>
-//   );
-// }
+//         </main>
+//       </div>
+//     );
+//   }
 
-
-//   // Logged-in user page
 //   return (
 //     <div className="min-h-screen flex bg-gray-50 text-gray-800">
 //       {/* Sidebar */}
@@ -626,11 +574,19 @@ export default Home;
 //           </div>
 //         </div>
 //         <div className="border-t px-4 py-4 space-y-3">
-//           <button onClick={() => setFeedbackOpen(true)} className="w-full flex items-center justify-between px-3 py-2 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition">
-//             Feedback <span>⭐</span>
+//           {/* Reset Password */}
+//           <button onClick={() => toast.info("Password reset popup here")} className="w-full flex items-center justify-between px-3 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition">
+//             Reset Password 
 //           </button>
+
+//           {/* Feedback */}
+//           <button onClick={() => setFeedbackModalOpen(true)} className="w-full flex items-center justify-between px-3 py-2 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition">
+//             Feedback 
+//           </button>
+
+//           {/* Logout */}
 //           <button onClick={() => { localStorage.removeItem("token"); window.location.href = "/"; }} className="w-full flex items-center justify-between px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition">
-//             Logout <span></span>
+//             Logout 
 //           </button>
 //         </div>
 //       </aside>
@@ -644,7 +600,6 @@ export default Home;
 //           onDateSelect={setDateFilter}
 //           onNewNoteClick={handleNewNoteClick}
 //         />
-
 //         <main className="flex-1 px-8 py-6 overflow-y-auto">
 //           <div className="max-w-7xl mx-auto space-y-8">
 //             {/* Coming Up */}
@@ -652,7 +607,14 @@ export default Home;
 //               <h2 className="text-lg font-semibold text-gray-700 mb-3">Coming Up</h2>
 //               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 //                 {comingUpNotes.length > 0 ? comingUpNotes.map((note) => (
-//                   <Card key={note._id} note={note} onEdit={onEdit} deleteNote={deleteNote} toggleCompletion={toggleCompletion} toggleFavorite={toggleFavorite} />
+//                   <Card
+//                     key={note._id}
+//                     note={note}
+//                     onEdit={onEdit}
+//                     deleteNote={deleteNote}
+//                     toggleCompletion={toggleCompletion}
+//                     toggleFavorite={toggleFavorite}
+//                   />
 //                 )) : <p className="text-gray-400">No upcoming notes</p>}
 //               </div>
 //             </section>
@@ -662,7 +624,14 @@ export default Home;
 //               <h2 className="text-lg font-semibold text-gray-700 mb-3">Today</h2>
 //               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 //                 {todayNotes.length > 0 ? todayNotes.map((note) => (
-//                   <Card key={note._id} note={note} onEdit={onEdit} deleteNote={deleteNote} toggleCompletion={toggleCompletion} toggleFavorite={toggleFavorite} />
+//                   <Card
+//                     key={note._id}
+//                     note={note}
+//                     onEdit={onEdit}
+//                     deleteNote={deleteNote}
+//                     toggleCompletion={toggleCompletion}
+//                     toggleFavorite={toggleFavorite}
+//                   />
 //                 )) : <p className="text-gray-400">No notes for today</p>}
 //               </div>
 //             </section>
@@ -670,8 +639,21 @@ export default Home;
 //         </main>
 //       </div>
 
-//       {isModalOpen && <NoteModal closeModal={closeModal} addNote={addNote} currentNote={currentNote} editNote={editNote} />}
-//       {isFeedbackOpen && <FeedbackModal closeModal={closeFeedback} submitFeedback={submitFeedback} />}
+//       {isModalOpen && (
+//         <NoteModal
+//           closeModal={closeModal}
+//           addNote={addNote}
+//           currentNote={currentNote}
+//           editNote={editNote}
+//         />
+//       )}
+
+//       {isFeedbackModalOpen && (
+//         <FeedbackModal
+//           closeModal={() => setFeedbackModalOpen(false)}
+//           submitFeedback={submitFeedback}
+//         />
+//       )}
 //     </div>
 //   );
 // };
