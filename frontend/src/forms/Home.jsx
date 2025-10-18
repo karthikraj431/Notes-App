@@ -244,45 +244,112 @@ const Home = () => {
     .slice(0, 5);
 
   // NON-USER PAGE
-  if (!user) {
-    return (
-      <div className="min-h-screen flex flex-col bg-gray-50 font-sans">
-        <Navbar
-          setQuery={() => {}}
-          onFilterSelect={() => {}}
-          currentFilter=""
-          onDateSelect={() => {}}
-          onNewNoteClick={() => {}}
-        />
-        <main className="flex-1 flex flex-col md:flex-row">
-          {/* Left half: quote and logo */}
-          <div className="md:w-1/2 flex flex-col justify-center items-center bg-indigo-50 p-10">
-            <div className="text-6xl mb-6">🔖</div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-4 text-center">
-              “Capture your thoughts, shape your ideas, and never lose a note again.”
-            </h2>
-            <p className="text-gray-600 text-center">
-              A simple, elegant place to keep your ideas organized.
-            </p>
-          </div>
 
-          {/* Right half: users and feedback */}
-          <div className="md:w-1/2 flex flex-col p-10 space-y-6">
-            <h2 className="text-2xl font-bold text-gray-700 mb-4">Our Users & Their Feedback</h2>
-            <div className="space-y-4 max-h-[70vh] overflow-y-auto">
-              {feedbacks.length > 0 ? feedbacks.map((fb) => (
-                <div key={fb._id} className="p-4 border rounded-lg bg-white shadow-sm">
-                  <p className="font-medium text-indigo-600">{fb.userName || "Anonymous"}</p>
+  // Inside Home.jsx, replace the NON-USER PAGE block with this:
+if (!user) {
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50 font-sans">
+      {/* Navbar for non-user */}
+      <nav className="w-full bg-white shadow-md py-4 px-6 flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-indigo-600">NOTES</h1>
+        <div className="flex items-center gap-4">
+          <Link
+            to="/login"
+            className="text-gray-700 font-medium hover:text-indigo-600 transition"
+          >
+            Login
+          </Link>
+          <Link
+            to="/signup"
+            className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition"
+          >
+            Signup
+          </Link>
+        </div>
+      </nav>
+
+      <main className="flex-1 flex flex-col md:flex-row">
+        {/* Left half: quote and logo */}
+        <div className="md:w-1/2 flex flex-col justify-center items-center bg-indigo-50 p-10">
+          <div className="text-6xl mb-6">🔖</div>
+          <h2 className="text-3xl font-bold text-gray-800 mb-4 text-center">
+            “Capture your thoughts, shape your ideas, and never lose a note again.”
+          </h2>
+          <p className="text-gray-600 text-center">
+            A simple, elegant place to keep your ideas organized.
+          </p>
+        </div>
+
+        {/* Right half: users and feedback */}
+        <div className="md:w-1/2 flex flex-col p-10 space-y-6">
+          <h2 className="text-2xl font-bold text-gray-700 mb-4">
+            Our Users & Their Feedback
+          </h2>
+          <div className="space-y-4 max-h-[70vh] overflow-y-auto">
+            {feedbacks.length > 0 ? (
+              feedbacks.map((fb) => (
+                <div
+                  key={fb._id}
+                  className="p-4 border rounded-lg bg-white shadow-sm"
+                >
+                  <p className="font-medium text-indigo-600">
+                    {fb.userName || "Anonymous"}
+                  </p>
                   <p className="text-gray-700">{fb.comment}</p>
-                  <p className="text-yellow-500">{Array(fb.rating).fill("⭐").join("")}</p>
+                  <p className="text-yellow-500">
+                    {Array(fb.rating).fill("⭐").join("")}
+                  </p>
                 </div>
-              )) : <p className="text-gray-400">No feedbacks yet</p>}
-            </div>
+              ))
+            ) : (
+              <p className="text-gray-400">No feedbacks yet</p>
+            )}
           </div>
-        </main>
-      </div>
-    );
-  }
+        </div>
+      </main>
+    </div>
+  );
+}
+
+  // if (!user) {
+  //   return (
+  //     <div className="min-h-screen flex flex-col bg-gray-50 font-sans">
+  //       <Navbar
+  //         setQuery={() => {}}
+  //         onFilterSelect={() => {}}
+  //         currentFilter=""
+  //         onDateSelect={() => {}}
+  //         onNewNoteClick={() => {}}
+  //       />
+  //       <main className="flex-1 flex flex-col md:flex-row">
+  //         {/* Left half: quote and logo */}
+  //         <div className="md:w-1/2 flex flex-col justify-center items-center bg-indigo-50 p-10">
+  //           <div className="text-6xl mb-6">🔖</div>
+  //           <h2 className="text-3xl font-bold text-gray-800 mb-4 text-center">
+  //             “Capture your thoughts, shape your ideas, and never lose a note again.”
+  //           </h2>
+  //           <p className="text-gray-600 text-center">
+  //             A simple, elegant place to keep your ideas organized.
+  //           </p>
+  //         </div>
+
+  //         {/* Right half: users and feedback */}
+  //         <div className="md:w-1/2 flex flex-col p-10 space-y-6">
+  //           <h2 className="text-2xl font-bold text-gray-700 mb-4">Our Users & Their Feedback</h2>
+  //           <div className="space-y-4 max-h-[70vh] overflow-y-auto">
+  //             {feedbacks.length > 0 ? feedbacks.map((fb) => (
+  //               <div key={fb._id} className="p-4 border rounded-lg bg-white shadow-sm">
+  //                 <p className="font-medium text-indigo-600">{fb.userName || "Anonymous"}</p>
+  //                 <p className="text-gray-700">{fb.comment}</p>
+  //                 <p className="text-yellow-500">{Array(fb.rating).fill("⭐").join("")}</p>
+  //               </div>
+  //             )) : <p className="text-gray-400">No feedbacks yet</p>}
+  //           </div>
+  //         </div>
+  //       </main>
+  //     </div>
+  //   );
+  // }
 
   // LOGGED-IN USER PAGE
   return (
