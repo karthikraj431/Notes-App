@@ -50,7 +50,7 @@ const Signup = () => {
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-indigo-100"
       >
-        <h2 className="text-3xl font-extrabold text-center text-indigo-600 mb-6">Create an Account ✨</h2>
+        <h2 className="text-3xl font-extrabold text-center text-indigo-600 mb-6">Please Create an Account ✨</h2>
 
         <div className="space-y-5">
           <input
